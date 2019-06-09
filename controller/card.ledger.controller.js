@@ -46,7 +46,7 @@ module.exports = {
                     const {card_value, card_pin} = verifiedResponse;
                     res.json({
                         success: true,
-                        result: {card_value, card_pin}
+                        result: {ref: _id, card_value, card_pin}
                     });
                 } else {
                     res.json({
