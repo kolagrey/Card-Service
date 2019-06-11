@@ -39,7 +39,7 @@ module.exports = {
             if (err || !verifiedResponse) {
                 res.json({
                     success: false,
-                    error: err ? err : 'Invlaid card pin'
+                    error: err ? err : 'Invalid card pin'
                 });
             } else {
                 const encryptedCard = passwordEncrypt.hashPassword(payload.pin, verifiedResponse.card_salt);
@@ -68,7 +68,7 @@ module.exports = {
             if (err || !verifiedResponse) {
                 res.json({
                     success: false,
-                    error: err ? err : 'Invlaid card pin'
+                    error: err ? err : 'Invalid card pin'
                 });
             } else {
                 const encryptedCard = passwordEncrypt.hashPassword(payload.pin, verifiedResponse.card_salt);
@@ -87,7 +87,7 @@ module.exports = {
                             } else {
                                 res.json({
                                     success: false,
-                                    error: err ? err : 'Invlaid card pin'
+                                    error: err ? err : 'Invalid card pin'
                                 });
                             }
                         });
