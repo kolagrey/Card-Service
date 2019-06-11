@@ -62,8 +62,7 @@ module.exports = {
     use: (req, res) => {
         const payload = req.body;
         CardLedger.findOne({
-            card_pin: payload.pin,
-            use_state: false
+            card_pin: payload.pin
         }, (err, verifiedResponse) => {
             if (err || !verifiedResponse) {
                 res.json({
@@ -71,6 +70,12 @@ module.exports = {
                     error: err ? err : 'Invalid card pin'
                 });
             } else {
+                if(verifiedResponse.use_state) {
+                    res.json({
+                        success: false,
+                        error: 'Used card pin'
+                    });
+                }
                 const encryptedCard = passwordEncrypt.hashPassword(payload.pin, verifiedResponse.card_salt);
                 if (encryptedCard.hashed === verifiedResponse.card_hash) {
                     const { card_value, card_pin } = verifiedResponse;
@@ -78,7 +83,7 @@ module.exports = {
                         _id: verifiedResponse._id
                     }, {
                             use_state: true
-                        }, (err, doc) => {
+                        }, { new: true }, (err, doc) => {
                             if (err || !doc) {
                                 res.json({
                                     success: true,
