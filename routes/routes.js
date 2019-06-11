@@ -13,6 +13,7 @@ router.post('/register/business/pos', accessInit.validate, registration.addBusin
 
 // Card Route(s)
 router.post('/create/cards', card.create);
+router.post('/use/card', card.use);
 router.post('/verify/card', card.verify);
 router.post('/activate/card', card.enable);
 router.post('/deactivate/card', card.disable);

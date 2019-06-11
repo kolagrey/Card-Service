@@ -38,20 +38,65 @@ module.exports = {
         }, (err, verifiedResponse) => {
             if (err || !verifiedResponse) {
                 res.json({
-                    success: false
-                })
+                    success: false,
+                    error: err
+                });
             } else {
                 const encryptedCard = passwordEncrypt.hashPassword(payload.pin, verifiedResponse.card_salt);
                 if (encryptedCard.hashed === verifiedResponse.card_hash) {
-                    const {card_value, card_pin} = verifiedResponse;
+                    const { card_value, card_pin } = verifiedResponse;
                     res.json({
                         success: true,
-                        result: {transaction_ref: verifiedResponse._id, card_value, card_pin}
+                        result: { transaction_ref: verifiedResponse._id, card_value, card_pin }
                     });
                 } else {
                     res.json({
-                        success: false
-                    })
+                        success: false,
+                        error: "Invalid card pin"
+                    });
+                }
+            }
+        });
+    },
+
+    use: (req, res) => {
+        const payload = req.body;
+        CardLedger.findOne({
+            card_pin: payload.pin,
+            use_state: false
+        }, (err, verifiedResponse) => {
+            if (err || !verifiedResponse) {
+                res.json({
+                    success: false,
+                    error: err
+                });
+            } else {
+                const encryptedCard = passwordEncrypt.hashPassword(payload.pin, verifiedResponse.card_salt);
+                if (encryptedCard.hashed === verifiedResponse.card_hash) {
+                    const { card_value, card_pin } = verifiedResponse;
+                    CardLedger.findOneAndUpdate({
+                        _id: verifiedResponse._id
+                    }, {
+                            use_state: true
+                        }, (err, doc) => {
+                            if (err || !doc) {
+                                res.json({
+                                    success: true,
+                                    result: { transaction_ref: verifiedResponse._id, card_value, card_pin }
+                                });
+                            } else {
+                                res.json({
+                                    success: false,
+                                    error: err
+                                });
+                            }
+                        });
+
+                } else {
+                    res.json({
+                        success: false,
+                        error: "Invalid card pin"
+                    });
                 }
             }
         });
@@ -96,7 +141,7 @@ module.exports = {
     get: (req, res) => {
         CardLedger.find({}, (err, docs) => {
             if (err || !docs) {
-                res.json({ success: false })
+                res.json({ success: false });
             }
             res.json({ success: true, result: docs });
         })
