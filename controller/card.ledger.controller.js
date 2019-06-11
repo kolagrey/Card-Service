@@ -86,13 +86,13 @@ module.exports = {
                         }, { new: true }, (err, doc) => {
                             if (err || !doc) {
                                 res.json({
-                                    success: true,
-                                    result: { transaction_ref: verifiedResponse._id, card_value, card_pin }
+                                    success: false,
+                                    error: err ? err : 'Unable to complete card pin validation'
                                 });
                             } else {
                                 res.json({
-                                    success: false,
-                                    error: err ? err : 'Invalid card pin'
+                                    success: true,
+                                    result: { transaction_ref: verifiedResponse._id, card_value, card_pin }
                                 });
                             }
                         });
